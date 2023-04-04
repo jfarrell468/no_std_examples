@@ -13,12 +13,17 @@ pub fn dump_memory(buf: &[u8]) {
                                          + 2                                        // two spaces
                                          + BYTES_PER_LINE                           // printable bytes
                                          + 1; // newline
-                                        
+
     let lines = (buf.len() + BYTES_PER_LINE - 1) / BYTES_PER_LINE;
     for i in 0..lines {
         let mut line: [u8; OUTPUT_BYTES_PER_LINE] = [0; OUTPUT_BYTES_PER_LINE];
         let mut cursor = Cursor::new(&mut line);
-        uwrite!(cursor, "{:016x}: ", addr_of!(buf[i * BYTES_PER_LINE]) as usize).unwrap();
+        uwrite!(
+            cursor,
+            "{:016x}: ",
+            addr_of!(buf[i * BYTES_PER_LINE]) as usize
+        )
+        .unwrap();
         for j in 0..WORDS_PER_LINE {
             for k in 0..BYTES_PER_WORD {
                 let offset = i * BYTES_PER_LINE + j * WORDS_PER_LINE + k;
