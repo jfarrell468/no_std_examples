@@ -54,7 +54,7 @@ Here, we can see that the stack contains:
 
 (After this, we have a second array of memory addresses which point to the addresses of the environment variables. We're going to ignore that for this example.)
 
-## 3. Parsing the command-line arguments
+## 3. Parsing the command line
 
 [Source code](src/bin/03-args)
 
@@ -82,7 +82,7 @@ In addition, we make several ergonomic improvements:
 * Add `uprint!` and `uprintln!` macros, similar to the standard `print!` and `println!`, by using a `String` to accumulate the formatted output.
 * Make the command line accessible with `env::args()`, similar to how we can in [regular Rust](https://doc.rust-lang.org/stable/std/env/fn.args.html). Our code is a simplified version of how Rust handles [command lines on Unix](https://github.com/rust-lang/rust/blob/master/library/std/src/sys/unix/args.rs).
 
-Now, we have a main function to print the command line arguments that looks pretty darn Rust-like:
+The output is the same as the previous example (it prints the command line), but now we have a main function that looks pretty darn Rust-like:
 
 ```rust
 fn main() {
