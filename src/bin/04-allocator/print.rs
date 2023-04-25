@@ -1,43 +1,36 @@
 extern crate alloc;
 use alloc::string::String;
-use core::convert::Infallible;
-use ufmt::uWrite;
 
 pub struct StringWriter(pub String);
 
-impl uWrite for StringWriter {
-    type Error = Infallible;
-
-    fn write_str(&mut self, s: &str) -> Result<(), Infallible> {
+impl core::fmt::Write for StringWriter {
+    fn write_str(&mut self, s: &str) -> Result<(), core::fmt::Error> {
         self.0.push_str(s);
         Ok(())
     }
 }
 
 #[macro_export]
-macro_rules! uprint {
+macro_rules! print {
     ($($arg:tt)*) => {{
         extern crate alloc;
         use alloc::string::String;
-        use ufmt::uwrite;
-        use crate::syscalls::write;
         use crate::print::StringWriter;
         let mut s = StringWriter(String::new());
-        uwrite!(&mut s, $($arg)*).unwrap();
-        write(1, s.0.as_bytes());
+        core::fmt::write(&mut s, format_args!($($arg)*)).unwrap();
+        crate::syscalls::write(1, s.0.as_bytes());
     }};
 }
 
 #[macro_export]
-macro_rules! uprintln {
+macro_rules! println {
     ($($arg:tt)*) => {{
         extern crate alloc;
         use alloc::string::String;
-        use ufmt::uwriteln;
-        use crate::syscalls::write;
         use crate::print::StringWriter;
         let mut s = StringWriter(String::new());
-        uwriteln!(&mut s, $($arg)*).unwrap();
-        write(1, s.0.as_bytes());
+        core::fmt::write(&mut s, format_args!($($arg)*)).unwrap();
+        s.0.push_str("\n");
+        crate::syscalls::write(1, s.0.as_bytes());
     }};
 }

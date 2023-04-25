@@ -34,7 +34,7 @@ Hello, world
 
 [Source code](src/bin/02-hexdump-stack)
 
-Now we want to take a look at the stack and see what it contains. This is accomplished with a hexdump function. While we could implement all of this manually, it's nice to be able to use formatted output to render things in hexadecimal. For this we use the [ufmt](https://docs.rs/ufmt/latest/ufmt/) crate.
+Now we want to take a look at the stack and see what it contains. This is accomplished with a hexdump function. While we could implement all of this manually, it's nice to be able to use formatted output to render things in hexadecimal. For this we can use [core::fmt](https://doc.rust-lang.org/beta/core/fmt/index.html).
 
 We also need a place to store the formatted output so we can print it. Normally, we would use a `String` or perhaps a `Vec<u8>`, but those are both "growable", without a predetermined size, so they require a heap and an allocator, neither of which we have. (For the same reason, we can't use the standard [alloc::fmt](https://doc.rust-lang.org/beta/alloc/fmt/index.html) for formatted output.) So, instead, we use a fixed-size array.
 
@@ -79,7 +79,7 @@ Instead of `[*const u8]`, it would be much nicer if the command-line arguments w
 In addition, we make several ergonomic improvements:
 
 * Move the process startup code into a separate file, [begin.rs](src/bin/04-allocator/begin.rs) and have `start_main` call a more normal-looking `main` function.
-* Add `uprint!` and `uprintln!` macros, similar to the standard `print!` and `println!`, by using a `String` to accumulate the formatted output.
+* Add `print!` and `println!` macros, similar to their std equivalents, by using a `String` to accumulate the formatted output.
 * Make the command line accessible with `env::args()`, similar to how we can in [regular Rust](https://doc.rust-lang.org/stable/std/env/fn.args.html). Our code is a simplified version of how Rust handles [command lines on Unix](https://github.com/rust-lang/rust/blob/master/library/std/src/sys/unix/args.rs).
 
 The output is the same as the previous example (it prints the command line), but now we have a main function that looks pretty darn Rust-like:
@@ -88,10 +88,10 @@ The output is the same as the previous example (it prints the command line), but
 fn main() {
     let argv = env::args();
 
-    uprintln!("argc = {}", argv.len());
+    println!("argc = {}", argv.len());
 
     for (i, arg) in argv.iter().enumerate() {
-        uprintln!("argv[{}] = {}", i, arg);
+        println!("argv[{}] = {}", i, arg);
     }
 }
 ```

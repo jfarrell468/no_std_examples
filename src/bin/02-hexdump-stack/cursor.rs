@@ -1,6 +1,5 @@
 use core::cmp;
-use core::convert::Infallible;
-use ufmt::uWrite;
+use core::fmt::{Error, Write};
 
 use crate::syscalls::write;
 
@@ -21,10 +20,8 @@ impl<'a> Cursor<'a> {
     }
 }
 
-impl<'a> uWrite for Cursor<'a> {
-    type Error = Infallible;
-
-    fn write_str(&mut self, s: &str) -> Result<(), Infallible> {
+impl<'a> Write for Cursor<'a> {
+    fn write_str(&mut self, s: &str) -> Result<(), Error> {
         let bytes = s.as_bytes();
 
         // Skip over already-copied data

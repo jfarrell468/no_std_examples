@@ -5,10 +5,10 @@ mod cursor;
 mod syscalls;
 
 use core::arch::global_asm;
+use core::fmt::write;
 use core::panic::PanicInfo;
 use core::slice::from_raw_parts;
 use core::str::from_utf8;
-use ufmt::uwriteln;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
@@ -42,16 +42,18 @@ unsafe fn start_main(stack_top: *const u8) -> ! {
     let mut buf: [u8; 128] = [0; 128];
     let mut cursor = cursor::Cursor::new(&mut buf);
 
-    uwriteln!(cursor, "argc = {}", argv.len()).unwrap_unchecked();
+    write(&mut cursor, format_args!("argc = {}\n", argv.len())).unwrap_unchecked();
     cursor.print(1);
 
     for i in 0..argv.len() {
         cursor.reset();
-        uwriteln!(
-            cursor,
-            "argv[{}] = {}",
-            i,
-            from_utf8(byte_slice_from_null_terminated(argv[i])).unwrap()
+        write(
+            &mut cursor,
+            format_args!(
+                "argv[{}] = {}\n",
+                i,
+                from_utf8(byte_slice_from_null_terminated(argv[i])).unwrap()
+            ),
         )
         .unwrap_unchecked();
         cursor.print(1);

@@ -9,9 +9,9 @@ mod syscalls;
 fn main() {
     let argv = env::args();
 
-    uprintln!("argc = {}", argv.len());
+    println!("argc = {}", argv.len());
 
     for (i, arg) in argv.iter().enumerate() {
-        uprintln!("argv[{}] = {}", i, arg);
+        println!("argv[{}] = {}", i, arg);
     }
 }

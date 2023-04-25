@@ -1,5 +1,5 @@
+use core::fmt::{write, Write};
 use core::ptr::addr_of;
-use ufmt::{uWrite, uwrite};
 
 use crate::cursor::Cursor;
 
@@ -18,24 +18,23 @@ pub fn dump_memory(buf: &[u8]) {
     for i in 0..lines {
         let mut line: [u8; OUTPUT_BYTES_PER_LINE] = [0; OUTPUT_BYTES_PER_LINE];
         let mut cursor = Cursor::new(&mut line);
-        uwrite!(
-            cursor,
-            "{:016x}: ",
-            addr_of!(buf[i * BYTES_PER_LINE]) as usize
+        write(
+            &mut cursor,
+            format_args!("{:016x}: ", addr_of!(buf[i * BYTES_PER_LINE]) as usize),
         )
         .unwrap();
         for j in 0..WORDS_PER_LINE {
             for k in 0..BYTES_PER_WORD {
                 let offset = i * BYTES_PER_LINE + j * WORDS_PER_LINE + k;
                 if offset < buf.len() {
-                    uwrite!(cursor, "{:02x}", buf[offset]).unwrap();
+                    write(&mut cursor, format_args!("{:02x}", buf[offset])).unwrap();
                 } else {
-                    uwrite!(cursor, "  ").unwrap();
+                    cursor.write_str("  ").unwrap();
                 }
             }
-            uwrite!(cursor, " ").unwrap();
+            cursor.write_char(' ').unwrap();
         }
-        uwrite!(cursor, " ").unwrap();
+        cursor.write_char(' ').unwrap();
         for j in 0..BYTES_PER_LINE {
             let offset = i * BYTES_PER_LINE + j;
             if offset < buf.len() {
@@ -47,7 +46,7 @@ pub fn dump_memory(buf: &[u8]) {
                 cursor.write_char(' ').unwrap();
             }
         }
-        uwrite!(cursor, "\n").unwrap();
+        cursor.write_char('\n').unwrap();
         cursor.print(1);
     }
 }
